@@ -1,8 +1,9 @@
 package brain_units
 
 import (
-	"simple_brain/math_fx"
 	"sync"
+
+	"github.com/raj96/simple_brain/math_fx"
 )
 
 type Layer struct {

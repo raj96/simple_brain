@@ -5,8 +5,8 @@ import (
 	"math/rand"
 	"time"
 
-	"simple_brain/math_fx"
-	"simple_brain/misc"
+	"github.com/raj96/simple_brain/math_fx"
+	"github.com/raj96/simple_brain/misc"
 )
 
 type Net struct {
