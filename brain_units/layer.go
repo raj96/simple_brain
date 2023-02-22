@@ -9,6 +9,7 @@ import (
 type Layer struct {
 	Nodes []*Node
 
+	biasNode        *Node
 	activationFxSet math_fx.ActivationFxSet
 	backPropBases   []float64
 }
@@ -24,6 +25,11 @@ func CreateLayer(numberOfNodes int, activationFunction math_fx.ActivationFxSet, 
 		layer.Nodes[i].InitializeWeights(nodesInNextLayer)
 	}
 
+	biasNode := CreateNode()
+	biasNode.Value = 1
+	biasNode.InitializeWeights(nodesInNextLayer)
+	layer.biasNode = biasNode
+
 	return layer
 }
 
@@ -37,6 +43,7 @@ func (layer *Layer) ForwardPropagate(prevLayer *Layer) {
 			for _, prevNode := range prevLayer.Nodes {
 				node.BaseValue += prevNode.Value * prevNode.Weights[nodeIndex]
 			}
+			node.BaseValue += prevLayer.biasNode.Value * prevLayer.biasNode.Weights[nodeIndex]
 			node.Value = layer.activationFxSet.Actual(node.BaseValue)
 			wg.Done()
 		}(node, nodeIndex)
@@ -65,6 +72,9 @@ func (layer *Layer) applyBackProp(learningRate float64) {
 		for wIndex := range node.Weights {
 			node.Weights[wIndex] -= learningRate * layer.backPropBases[wIndex] * node.Value
 		}
+	}
+	for wIndex := range layer.biasNode.Weights {
+		layer.biasNode.Weights[wIndex] -= learningRate * layer.backPropBases[wIndex] * layer.biasNode.Value
 	}
 }
 

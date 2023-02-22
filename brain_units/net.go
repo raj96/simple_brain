@@ -10,11 +10,12 @@ import (
 )
 
 type Net struct {
-	Layers []*Layer
-
-	costFxSet    math_fx.CostFxSet
-	learningRate float64
+	Layers       []*Layer
+	LearningRate float64
 	Loss         float64
+
+	bias      float64
+	costFxSet math_fx.CostFxSet
 }
 
 func CreateNet(netMap []int, costFunction math_fx.CostFxSet, activationFunction math_fx.ActivationFxSet, learningRate float64) *Net {
@@ -24,9 +25,13 @@ func CreateNet(netMap []int, costFunction math_fx.CostFxSet, activationFunction 
 	net := &Net{
 		Layers:       make([]*Layer, numberOfLayers),
 		costFxSet:    costFunction,
-		learningRate: learningRate,
+		LearningRate: learningRate,
 		Loss:         math.Inf(1),
+		bias:         1,
 	}
+
+	biasNode := CreateNode()
+	biasNode.Value = 1
 
 	// Initialize layers
 	net.Layers[0] = CreateLayer(netMap[0], activationFunction, netMap[1])
@@ -54,10 +59,10 @@ func (net *Net) BackwardPropagate(target []float64) {
 	numberOfLayers := len(net.Layers)
 	net.Layers[numberOfLayers-1].BackwardCostPropagate(net.Layers[numberOfLayers-2], target, net.costFxSet)
 	for i := numberOfLayers - 2; i > 0; i-- {
-		net.Layers[i].applyBackProp(net.learningRate)
+		net.Layers[i].applyBackProp(net.LearningRate)
 		net.Layers[i].BackwardPropagate(net.Layers[i-1])
 	}
-	net.Layers[0].applyBackProp(net.learningRate)
+	net.Layers[0].applyBackProp(net.LearningRate)
 }
 
 func (net *Net) GetOutput() []float64 {
