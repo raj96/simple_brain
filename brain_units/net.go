@@ -79,8 +79,10 @@ func (net *Net) Train(trainingData []misc.TrainingData, epochs int) {
 	net.Loss = 0
 	l_trainingData := len(trainingData)
 	for epochs > 0 {
+		rIndex = rand.Intn(l_trainingData)
 		for iter := 0; iter < l_trainingData; iter++ {
-			rIndex = rand.Intn(l_trainingData)
+			rIndex += iter
+			rIndex %= (l_trainingData - 1)
 
 			net.SetInput(trainingData[rIndex].Input)
 			net.ForwardPropagate()
