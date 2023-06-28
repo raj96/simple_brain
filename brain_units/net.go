@@ -77,13 +77,16 @@ func (net *Net) GetOutput() []float64 {
 func (net *Net) Train(trainingData []misc.TrainingData, epochs int) {
 	var rIndex int
 	net.Loss = 0
+	l_trainingData := len(trainingData)
 	for epochs > 0 {
-		rIndex = rand.Intn(len(trainingData))
+		for iter := 0; iter < l_trainingData; iter++ {
+			rIndex = rand.Intn(l_trainingData)
 
-		net.SetInput(trainingData[rIndex].Input)
-		net.ForwardPropagate()
-		net.CalculateLoss(trainingData[rIndex].Output)
-		net.BackwardPropagate(trainingData[rIndex].Output)
+			net.SetInput(trainingData[rIndex].Input)
+			net.ForwardPropagate()
+			net.CalculateLoss(trainingData[rIndex].Output)
+			net.BackwardPropagate(trainingData[rIndex].Output)
+		}
 
 		epochs--
 	}
